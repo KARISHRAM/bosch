@@ -1,4 +1,4 @@
- 
+
 class BankAccount:
     def __init__(self, account_number, account_holder, balance=0.0):
         self.account_number = account_number
@@ -82,6 +82,7 @@ class Bank:
 if __name__ == "__main__":
     bank = Bank()
 
+    # 1. Create accounts
     s_acc = SavingsAccount("S123", "Alice", 1000, 0.05)
     c_acc = CurrentAccount("C456", "Bob", 500, 300)
     f_acc = FixedDepositAccount("F789", "Charlie", 2000, lock_in_period=6)
@@ -90,29 +91,47 @@ if __name__ == "__main__":
     bank.add_account(c_acc)
     bank.add_account(f_acc)
 
-    s_acc.deposit(500)
+    print("=== Initial Accounts ===")
     print(s_acc)
-    s_acc.apply_interest()
-    print("After interest:", s_acc)
-
-    c_acc.withdraw(700)
     print(c_acc)
+    print(f_acc)
 
+    # 2. SavingsAccount test
+    print("\n=== Savings Account Test ===")
+    s_acc.deposit(500)
+    print("After deposit:", s_acc)
+    s_acc.apply_interest()
+    print("After applying interest:", s_acc)
+
+    # 3. CurrentAccount test
+    print("\n=== Current Account Test ===")
+    print("Before withdrawal:", c_acc)
+    c_acc.withdraw(700)  # within overdraft limit
+    print("After withdrawal:", c_acc)
+
+    # 4. FixedDepositAccount test
+    print("\n=== Fixed Deposit Account Test ===")
+    print("Attempting early withdrawal...")
     try:
         f_acc.withdraw(500)
     except ValueError as e:
-        print("FixedDepositAccount error:", e)
+        print("Error:", e)
 
-    f_acc.pass_month()
-    f_acc.pass_month()
-    f_acc.pass_month()
-    f_acc.pass_month()
-    f_acc.pass_month()
-    f_acc.pass_month()
+    print("Simulating 6 months...")
+    for _ in range(6):
+        f_acc.pass_month()
+
     f_acc.withdraw(500)
-    print(f_acc)
+    print("After lock-in withdrawal:", f_acc)
+
+    # 5. Bank transfer test
+    print("\n=== Bank Transfer Test ===")
+    print("Before transfer:")
+    print(s_acc)
+    print(c_acc)
 
     bank.transfer_funds("S123", "C456", 200)
+
     print("After transfer:")
     print(s_acc)
     print(c_acc)
